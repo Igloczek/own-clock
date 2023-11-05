@@ -150,7 +150,7 @@ import Layout from "@/layout/Layout.astro"
 
       get isAsleep() {
         return (
-          this.left.hours < 0 && this.left.minutes < 0 && this.left.seconds < 0
+          this.left.hours < 0 || this.left.minutes < 0 || this.left.seconds < 0
         )
       },
 
