@@ -4,11 +4,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme")
 
 module.exports = {
-  content: [
-    "./src/app/**/*.astro",
-    "./src/components/**/*.astro",
-    "./src/pages/**/*.astro",
-  ],
+  content: ["./src/layout/**/*.astro", "./src/pages/**/*.astro"],
   theme: {
     fontSize: {
       xs: [
