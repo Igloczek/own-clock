@@ -132,9 +132,10 @@ import Layout from "@/layout/Layout.astro"
           const position = JSON.parse(window.localStorage.getItem("position"))
           this.coords.lat = position.latitude
           this.coords.lon = position.longitude
+
+          this.update()
         }
 
-        this.update()
         setInterval(() => {
           if (!this.isConfigured) {
             return
@@ -161,6 +162,8 @@ import Layout from "@/layout/Layout.astro"
 
             this.coords.lat = latitude
             this.coords.lon = longitude
+
+            this.update()
 
             window.localStorage.setItem(
               "position",
