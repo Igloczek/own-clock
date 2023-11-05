@@ -117,10 +117,6 @@ import Layout from "@/layout/Layout.astro"
         lat: 0,
         lon: 0,
       },
-      times: {
-        wakeUpTime: 0,
-        sleepTime: 0,
-      },
       past: {
         hours: 0,
         minutes: 0,
@@ -139,7 +135,23 @@ import Layout from "@/layout/Layout.astro"
         }
 
         this.update()
-        setInterval(() => this.update(), 1000)
+        setInterval(() => {
+          if (!this.isConfigured) {
+            return
+          }
+
+          this.update()
+        }, 1000)
+      },
+
+      get isConfigured() {
+        return this.coords.lat && this.coords.lon
+      },
+
+      get isAsleep() {
+        return (
+          this.left.hours < 0 && this.left.minutes < 0 && this.left.seconds < 0
+        )
       },
 
       setLocation() {
@@ -171,10 +183,6 @@ import Layout from "@/layout/Layout.astro"
       },
 
       update() {
-        if (!this.coords.lat || !this.coords.lon) {
-          return
-        }
-
         const s = spacetime.now(tzlookup(this.coords.lat, this.coords.lon))
 
         const today = s.startOf("day").toNativeDate()
@@ -228,7 +236,7 @@ import Layout from "@/layout/Layout.astro"
       x-data="app"
     >
       <div
-        x-show="!coords.lat || !coords.lon"
+        x-show="!isConfigured"
         x-cloak
       >
         <h1 class="text-5xl font-bold leading-tight min-[340px]:text-6xl">
@@ -252,7 +260,16 @@ import Layout from "@/layout/Layout.astro"
       </div>
 
       <div
-        x-show="coords.lat && coords.lon"
+        x-show="isConfigured && isAsleep"
+        x-cloak
+      >
+        <div class="p-1 font-bold leading-tight">
+          You should be asleep, go to bed, now.
+        </div>
+      </div>
+
+      <div
+        x-show="isConfigured && !isAsleep"
         x-cloak
       >
         <div>
