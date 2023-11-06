@@ -151,7 +151,12 @@ import Layout from "@/layout/Layout.astro"
 
       get isAsleep() {
         return (
-          this.left.hours < 0 || this.left.minutes < 0 || this.left.seconds < 0
+          this.past.hours < 0 ||
+          this.past.minutes < 0 ||
+          this.past.seconds < 0 ||
+          this.left.hours < 0 ||
+          this.left.minutes < 0 ||
+          this.left.seconds < 0
         )
       },
 
