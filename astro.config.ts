@@ -6,8 +6,7 @@ import viteSSL from "vite-plugin-mkcert"
 // https://astro.build/config
 export default defineConfig({
   output: "static",
-  site: "https://igloczek.github.io",
-  base: "/own-clock",
+  site: "https://ownclock.app",
   integrations: [tailwind()],
   vite: {
     plugins: [viteSSL()],
