@@ -26,6 +26,7 @@ import Layout from "@/layout/Layout.astro"
 
   document.addEventListener("alpine:init", () => {
     Alpine.data("app", () => ({
+      migration: false,
       loading: false,
       error: null,
       coords: {
@@ -35,6 +36,18 @@ import Layout from "@/layout/Layout.astro"
       past: 0,
       left: 0,
       init() {
+        const url = new URL(window.location.href)
+
+        if (url.searchParams.get("lat") && url.searchParams.get("lon")) {
+          this.migration = true
+          this.coords.lat = url.searchParams.get("lat")
+          this.coords.lon = url.searchParams.get("lon")
+
+          window.history.replaceState({}, "", "/")
+
+          this.update()
+        }
+
         if (window.localStorage.getItem("position")) {
           const position = JSON.parse(window.localStorage.getItem("position"))
           this.coords.lat = position.latitude
@@ -175,6 +188,18 @@ import Layout from "@/layout/Layout.astro"
       class="flex h-full w-full flex-col items-center justify-center px-4 py-8 text-center"
       x-data="app"
     >
+      <div
+        class="fixed top-4 rounded border border-green-700 bg-green-700/10 px-12 py-4"
+        x-show="migration"
+        x-cloak
+      >
+        <div class="text-xl">Welcome on the new domain 🎉</div>
+        <div class="pt-2 text-sm">
+          Please, update your bookmarks to
+          <span class="font-bold">ownclock.app</span>
+        </div>
+      </div>
+
       <div
         class="flex flex-col items-center justify-center"
         x-show="!isConfigured"
