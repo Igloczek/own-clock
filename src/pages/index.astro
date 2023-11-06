@@ -39,17 +39,10 @@ import Layout from "@/layout/Layout.astro"
           const position = JSON.parse(window.localStorage.getItem("position"))
           this.coords.lat = position.latitude
           this.coords.lon = position.longitude
-
-          this.update()
+          window.location.href = `https://ownclock.app/?lat=${this.coords.lat}&lon=${this.coords.lon}`
+          return
         }
-
-        setInterval(() => {
-          if (!this.isConfigured) {
-            return
-          }
-
-          this.update()
-        }, 1000)
+        window.location.href = `https://ownclock.app`
       },
 
       get isConfigured() {
