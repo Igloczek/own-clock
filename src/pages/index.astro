@@ -40,8 +40,17 @@ import Layout from "@/layout/Layout.astro"
 
         if (url.searchParams.get("lat") && url.searchParams.get("lon")) {
           this.migration = true
+
           this.coords.lat = url.searchParams.get("lat")
           this.coords.lon = url.searchParams.get("lon")
+
+          window.localStorage.setItem(
+            "position",
+            JSON.stringify({
+              latitude: this.coords.lat,
+              longitude: this.coords.lon,
+            }),
+          )
 
           window.history.replaceState({}, "", "/")
 
