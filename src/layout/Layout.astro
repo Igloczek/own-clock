@@ -1,3 +1,7 @@
+---
+import { AstroSeo } from "@astrolib/seo"
+---
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -43,14 +47,32 @@
       content="#ffffff"
     />
 
-    <title>own clock - escape the tyranny of time!</title>
-
     <script
       defer
       data-domain="ownclock.app"
       src="https://plausible.io/js/script.js"
     ></script>
   </head>
+
+  <AstroSeo
+    title="own clock - escape the tyranny of time!"
+    description="clock that won't tell you current time, but will show you how much time you have left till the end of the day to woke up on sunrise after 8 hours of sleep"
+    openGraph={{
+      title: "own clock - escape the tyranny of time!",
+      description:
+        "clock that won't tell you current time, but will show you how much time you have left till the end of the day to woke up on sunrise after 8 hours of sleep",
+      url: "https://ownclock.app",
+      images: [
+        {
+          url: "https://ownclock.app/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "own clock - escape the tyranny of time!",
+        },
+      ],
+      site_name: "own clock",
+    }}
+  />
 
   <body class="h-full text-gray-700 dark:bg-gray-900 dark:text-gray-300">
     <slot />
