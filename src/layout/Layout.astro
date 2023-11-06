@@ -47,6 +47,26 @@ import { AstroSeo } from "@astrolib/seo"
       content="#ffffff"
     />
 
+    <AstroSeo
+      title="own clock - escape the tyranny of time!"
+      description="clock that won't tell you current time, but will show you how much time you have left till the end of the day to woke up on sunrise after 8 hours of sleep"
+      openGraph={{
+        title: "own clock - escape the tyranny of time!",
+        description:
+          "clock that won't tell you current time, but will show you how much time you have left till the end of the day to woke up on sunrise after 8 hours of sleep",
+        url: "https://ownclock.app",
+        images: [
+          {
+            url: "https://ownclock.app/og-image.jpg",
+            width: 1200,
+            height: 630,
+            alt: "own clock - escape the tyranny of time!",
+          },
+        ],
+        site_name: "own clock",
+      }}
+    />
+
     <script
       defer
       data-domain="ownclock.app"
@@ -54,26 +74,6 @@ import { AstroSeo } from "@astrolib/seo"
     >
     </script>
   </head>
-
-  <AstroSeo
-    title="own clock - escape the tyranny of time!"
-    description="clock that won't tell you current time, but will show you how much time you have left till the end of the day to woke up on sunrise after 8 hours of sleep"
-    openGraph={{
-      title: "own clock - escape the tyranny of time!",
-      description:
-        "clock that won't tell you current time, but will show you how much time you have left till the end of the day to woke up on sunrise after 8 hours of sleep",
-      url: "https://ownclock.app",
-      images: [
-        {
-          url: "https://ownclock.app/og-image.jpg",
-          width: 1200,
-          height: 630,
-          alt: "own clock - escape the tyranny of time!",
-        },
-      ],
-      site_name: "own clock",
-    }}
-  />
 
   <body class="h-full text-gray-700 dark:bg-gray-900 dark:text-gray-300">
     <slot />
