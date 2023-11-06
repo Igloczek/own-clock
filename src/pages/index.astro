@@ -111,17 +111,16 @@ import Layout from "@/layout/Layout.astro"
       },
 
       update() {
-        const s = spacetime.now(tzlookup(this.coords.lat, this.coords.lon))
+        const timezone = tzlookup(this.coords.lat, this.coords.lon)
+        const now = spacetime.now(timezone)
 
-        const today = s.startOf("day").toNativeDate()
-        const tomorrow = s.add(1, "day").startOf("day").toNativeDate()
+        const today = now.startOf("day").toNativeDate()
+        const tomorrow = now.add(1, "day").startOf("day").toNativeDate()
 
         const wakeUpTime = spacetime(this.getSunriseTime(today))
         const nextSunrise = spacetime(this.getSunriseTime(tomorrow))
 
         const sleepTime = nextSunrise.subtract(8, "hours")
-
-        const now = spacetime.now()
 
         this.past = wakeUpTime.diff(now, "milliseconds")
         this.left = now.diff(sleepTime, "milliseconds")
@@ -206,6 +205,31 @@ import Layout from "@/layout/Layout.astro"
       </div>
 
       <div
+        x-show="isConfigured"
+        class="fixed bottom-2 left-0 right-0 z-10 text-xs text-gray-300"
+      >
+        <div
+          class="flex flex-col items-center justify-center gap-4 sm:flex-row"
+        >
+          <a
+            class="underline"
+            :href="`https://www.google.com/maps/place/${coords.lat},${coords.lon}`"
+            x-text="`${coords.lat}, ${coords.lon}`"
+            title="Open in Google Maps"
+            target="_blank"
+          >
+          </a>
+          <button
+            type="button"
+            class="rounded border border-gray-300 px-2 py-1 transition hover:border-purple-300 hover:text-purple-300"
+            @click="resetLocation"
+          >
+            Reset location
+          </button>
+        </div>
+      </div>
+
+      <div
         x-show="isConfigured && isAsleep"
         x-cloak
       >
@@ -218,14 +242,6 @@ import Layout from "@/layout/Layout.astro"
         x-show="isConfigured && !isAsleep"
         x-cloak
       >
-        <button
-          type="button"
-          class="fixed bottom-2 left-0 right-0 z-10 mx-auto w-[320px] rounded px-16 py-2 text-xs text-gray-300"
-          @click="resetLocation"
-        >
-          Reset location
-        </button>
-
         <div>
           <div class="pb-2 text-xs">Since wake up</div>
           <div
