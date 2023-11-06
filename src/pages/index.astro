@@ -108,7 +108,7 @@ import Layout from "@/layout/Layout.astro"
         const timezone = tzlookup(this.coords.lat, this.coords.lon)
         const offset = spacetime(date, timezone).timezone().current.offset
 
-        date = spacetime(date)
+        date = spacetime(date).add(12, "hour")
 
         if (offset > 0) {
           date = date.add(offset, "hour")
