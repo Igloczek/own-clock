@@ -117,16 +117,8 @@ import Layout from "@/layout/Layout.astro"
         lat: 0,
         lon: 0,
       },
-      past: {
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      },
-      left: {
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      },
+      past: 0,
+      left: 0,
       init() {
         if (window.localStorage.getItem("position")) {
           const position = JSON.parse(window.localStorage.getItem("position"))
@@ -150,14 +142,7 @@ import Layout from "@/layout/Layout.astro"
       },
 
       get isAsleep() {
-        return (
-          this.past.hours < 0 ||
-          this.past.minutes < 0 ||
-          this.past.seconds < 0 ||
-          this.left.hours < 0 ||
-          this.left.minutes < 0 ||
-          this.left.seconds < 0
-        )
+        return this.left < 0 || this.past < 0
       },
 
       setLocation() {
@@ -196,35 +181,31 @@ import Layout from "@/layout/Layout.astro"
         const today = s.startOf("day").toNativeDate()
         const tomorrow = s.add(1, "day").startOf("day").toNativeDate()
 
-        const wakeUpTime = this.getSunriseTime(today)
-        const nextSunrise = this.getSunriseTime(tomorrow)
+        const wakeUpTime = spacetime(this.getSunriseTime(today))
+        const nextSunrise = spacetime(this.getSunriseTime(tomorrow))
 
-        const sleepTime = spacetime(nextSunrise).subtract(8, "hours")
+        const sleepTime = nextSunrise.subtract(8, "hours")
 
         const now = spacetime.now()
 
-        const past = spacetime(wakeUpTime).diff(now, "milliseconds")
-        const left = now.diff(sleepTime, "milliseconds")
+        this.past = wakeUpTime.diff(now, "milliseconds")
+        this.left = now.diff(sleepTime, "milliseconds")
+      },
+      getTime(number, type) {
+        if (type === "hours") {
+          return this.formatNumber(Math.floor(number / (1000 * 60 * 60)))
+        }
 
-        this.past.hours = Math.floor(past / (1000 * 60 * 60))
-          .toString()
-          .padStart(2, "0")
-        this.past.minutes = Math.floor((past / (1000 * 60)) % 60)
-          .toString()
-          .padStart(2, "0")
-        this.past.seconds = Math.floor((past / 1000) % 60)
-          .toString()
-          .padStart(2, "0")
+        if (type === "minutes") {
+          return this.formatNumber(Math.floor((number / (1000 * 60)) % 60))
+        }
 
-        this.left.hours = Math.floor(left / (1000 * 60 * 60))
-          .toString()
-          .padStart(2, "0")
-        this.left.minutes = Math.floor((left / (1000 * 60)) % 60)
-          .toString()
-          .padStart(2, "0")
-        this.left.seconds = Math.floor((left / 1000) % 60)
-          .toString()
-          .padStart(2, "0")
+        if (type === "seconds") {
+          return this.formatNumber(Math.floor((number / 1000) % 60))
+        }
+      },
+      formatNumber(number) {
+        return number.toString().padStart(2, "0")
       },
     }))
   })
@@ -244,6 +225,7 @@ import Layout from "@/layout/Layout.astro"
       x-data="app"
     >
       <div
+        class="flex flex-col items-center justify-center"
         x-show="!isConfigured"
         x-cloak
       >
@@ -251,9 +233,15 @@ import Layout from "@/layout/Layout.astro"
           Own <span class="text-purple-500">clock</span>
         </h1>
 
-        <p class="mt-2 max-w-prose text-sm leading-6">
-          Break free from the constraints of standard time, embrace the sun's
+        <p class="mt-4 max-w-prose leading-6">
+          Break free from the constraints of standard time and embrace the sun's
           natural rhythm for a healthier sleep cycle and a more balanced day.
+        </p>
+
+        <p class="mt-4 max-w-prose text-sm leading-6">
+          How? Each day, the app will tell you when to go to sleep, ensuring you
+          wake up at sunrise after 8 hours of sleep. By using only relative
+          time, it helps you break habits tied to the conventional clock.
         </p>
 
         <button
@@ -262,8 +250,9 @@ import Layout from "@/layout/Layout.astro"
         >
           Setup own clock
         </button>
-        <p class="mx-auto p-1 text-center text-xs">
-          Location is needed to calculate your local sunrise and sunset times
+        <p class="p-1 text-center text-xs">
+          App need location to calculate your local sunrise and sunset times,
+          it's one-time action.
         </p>
       </div>
 
@@ -287,19 +276,19 @@ import Layout from "@/layout/Layout.astro"
           >
             <div
               class="w-20 rounded border p-2 font-mono"
-              x-text="past.hours"
+              x-text="getTime(past, 'hours')"
             >
               00
             </div>
             <div
               class="w-20 rounded border p-2 font-mono"
-              x-text="past.minutes"
+              x-text="getTime(past, 'minutes')"
             >
               00
             </div>
             <div
               class="w-20 rounded border p-2 font-mono"
-              x-text="past.seconds"
+              x-text="getTime(past, 'seconds')"
             >
               00
             </div>
@@ -314,19 +303,19 @@ import Layout from "@/layout/Layout.astro"
           >
             <div
               class="w-20 rounded border p-2 font-mono"
-              x-text="left.hours"
+              x-text="getTime(left, 'hours')"
             >
               00
             </div>
             <div
               class="w-20 rounded border p-2 font-mono"
-              x-text="left.minutes"
+              x-text="getTime(left, 'minutes')"
             >
               00
             </div>
             <div
               class="w-20 rounded border p-2 font-mono"
-              x-text="left.seconds"
+              x-text="getTime(left, 'seconds')"
             >
               00
             </div>
