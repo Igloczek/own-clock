@@ -226,10 +226,10 @@ import Layout from "@/layout/Layout.astro"
         class="fixed bottom-2 left-0 right-0 z-10 text-xs text-gray-300"
       >
         <div
-          class="flex flex-col items-center justify-center gap-4 sm:flex-row"
+          class="flex flex-col items-center justify-center gap-1 min-[360px]:flex-row min-[360px]:gap-4"
         >
           <a
-            class="underline"
+            class="block hover:text-purple-300"
             :href="`https://www.google.com/maps/place/${coords.lat},${coords.lon}`"
             x-text="`${coords.lat}, ${coords.lon}`"
             title="Open in Google Maps"
