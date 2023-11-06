@@ -105,7 +105,24 @@ import Layout from "@/layout/Layout.astro"
       },
 
       getSunriseTime(date) {
-        const times = SunCalc.getTimes(date, this.coords.lat, this.coords.lon)
+        const timezone = tzlookup(this.coords.lat, this.coords.lon)
+        const offset = spacetime(date, timezone).timezone().current.offset
+
+        date = spacetime(date)
+
+        if (offset > 0) {
+          date = date.add(offset, "hour")
+        }
+
+        if (offset < 0) {
+          date = date.subtract(offset, "hour")
+        }
+
+        const times = SunCalc.getTimes(
+          date.toNativeDate(),
+          this.coords.lat,
+          this.coords.lon,
+        )
 
         return times.sunrise
       },
