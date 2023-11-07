@@ -82,6 +82,45 @@ import Layout from "@/layout/Layout.astro"
         return this.left < 0 || this.past < 0
       },
 
+      sendNotification() {
+        console.log("elo")
+        // if (Notification.permission !== "granted") {
+        //   Notification.requestPermission().then((permission) => {
+        //     if (permission === "granted") {
+        //       new Notification("Title", {
+        //         body: "Message",
+        //         requireInteraction: true,
+        //       })
+
+        //       new Notification("Title", {
+        //         body: "Message",
+        //       })
+        //     }
+        //   })
+        // }
+
+        if (!("Notification" in window)) {
+          // Check if the browser supports notifications
+          alert("This browser does not support desktop notification")
+        } else if (Notification.permission === "granted") {
+          // Check whether notification permissions have already been granted;
+          // if so, create a notification
+          console.log("hi there")
+          const notification = new Notification("Hi there!")
+          // …
+        } else if (Notification.permission !== "denied") {
+          // We need to ask the user for permission
+          Notification.requestPermission().then((permission) => {
+            // If the user accepts, let's create a notification
+            if (permission === "granted") {
+              console.log("hi there")
+              const notification = new Notification("Hi there!")
+              // …
+            }
+          })
+        }
+      },
+
       setLocation() {
         this.loading = true
 
@@ -197,6 +236,14 @@ import Layout from "@/layout/Layout.astro"
       class="flex h-full w-full flex-col items-center justify-center px-4 py-8 text-center"
       x-data="app"
     >
+      <button
+        class="absolute right-4 top-4 rounded border border-purple-500 px-2 py-1 text-sm text-purple-500 hover:bg-purple-500 hover:text-white"
+        type="button"
+        @click="sendNotification"
+      >
+        Send notification
+      </button>
+
       <div
         class="fixed top-4 rounded border border-green-700 bg-green-700/10 px-12 py-4"
         x-show="migration"
