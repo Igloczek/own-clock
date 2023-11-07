@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config"
 
+import serviceWorker from "astrojs-service-worker"
 import tailwind from "@astrojs/tailwind"
 import viteSSL from "vite-plugin-mkcert"
 
@@ -7,7 +8,7 @@ import viteSSL from "vite-plugin-mkcert"
 export default defineConfig({
   output: "static",
   site: "https://ownclock.app",
-  integrations: [tailwind()],
+  integrations: [serviceWorker(), tailwind()],
   vite: {
     plugins: [viteSSL()],
     server: {

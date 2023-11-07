@@ -1,6 +1,8 @@
 {
   "name": "own clock",
   "short_name": "own clock",
+  "description": "clock that won't tell you current time, but will show you how much time you have left till the end of the day to woke up on sunrise after 8 hours of sleep",
+  "start_url": "/",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
