@@ -8,6 +8,17 @@ import { AstroSeo } from "@astrolib/seo"
     <meta charset="utf-8" />
 
     <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#FFFFFF"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#181a1b"
+    />
+
+    <meta
       name="viewport"
       content="width=device-width,initial-scale=1"
     />
@@ -96,7 +107,8 @@ import { AstroSeo } from "@astrolib/seo"
       defer
       data-domain="ownclock.app"
       src="https://plausible.io/js/script.js"
-    ></script>
+    >
+    </script>
   </head>
 
   <body class="h-full text-gray-700 dark:bg-gray-900 dark:text-gray-300">
