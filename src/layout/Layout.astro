@@ -120,6 +120,17 @@ import { AstroSeo } from "@astrolib/seo"
         display: none !important;
       }
     </style>
+
+    <script>
+      import Alpine from "alpinejs"
+
+      window.onload = () => {
+        Alpine.start()
+
+        // needed for Alpine devtools
+        window.Alpine = Alpine
+      }
+    </script>
   </head>
 
   <body class="h-full text-gray-700 dark:bg-gray-900 dark:text-gray-300">
