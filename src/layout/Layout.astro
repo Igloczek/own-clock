@@ -104,8 +104,22 @@ import { AstroSeo } from "@astrolib/seo"
       data-api="/stats/api/event"
       data-domain="ownclock.app"
       defer
-    >
-    </script>
+    ></script>
+
+    <style is:inline>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        height: 100%;
+        min-width: 320px;
+      }
+
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
   </head>
 
   <body class="h-full text-gray-700 dark:bg-gray-900 dark:text-gray-300">
