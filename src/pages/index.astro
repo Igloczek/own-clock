@@ -2,20 +2,203 @@
 import Layout from "@/layout/Layout.astro"
 ---
 
-<style>
-  * {
-    box-sizing: border-box;
-  }
+<Layout>
+  <main
+    class="h-full"
+    x-data="app"
+  >
+    <div
+      class="fixed left-4 right-4 top-4 flex max-w-3xl flex-col items-center justify-center rounded border border-green-700 bg-green-700/10 px-4 py-4 text-center md:mx-auto"
+      x-show="migration"
+      x-cloak
+    >
+      <div class="text-xl">Welcome to our new domain 🎉</div>
+      <div class="pt-2 text-sm">
+        Please, update your bookmarks to
+        <span class="font-bold">ownclock.app</span>
+      </div>
+    </div>
 
-  html {
-    height: 100%;
-    min-width: 320px;
-  }
+    <div
+      class="fixed left-4 right-4 top-4 flex max-w-3xl flex-col items-center justify-center rounded border border-purple-700 bg-purple-700/10 px-4 py-4 text-center md:mx-auto"
+      x-show="isConfigured && survey"
+      x-cloak
+    >
+      <div class="text-base">Thanks for being an early adopter 🥰</div>
+      <div class="pt-2 text-xs">
+        Right now, this app is pretty basic, maybe even too basic.
+        <br />I'm thinking it needs two things: <strong>
+          home screen widgets
+        </strong> and <strong>push notifications</strong>.
+        <br />
+         But that means I'd have to create a mobile app, which will take some
+        time and won't be free anymore.
+      </div>
 
-  [x-cloak] {
-    display: none;
-  }
-</style>
+      <div class="mx-auto mt-4 grid grid-cols-2 gap-4 text-xs">
+        <div>
+          <buton
+            class="flex h-full cursor-pointer items-center justify-center rounded border border-purple-300 bg-purple-200 px-5 py-2 transition dark:border-0 dark:bg-purple-900"
+            type="button"
+            @click="submitSurvey('mobile')"
+          >
+            Shut up and take my money, I want a mobile app
+          </buton>
+        </div>
+
+        <div>
+          <buton
+            class="flex h-full cursor-pointer items-center justify-center rounded border border-purple-300 bg-purple-200 px-5 py-2 transition dark:border-0 dark:bg-purple-900"
+            type="button"
+            @click="submitSurvey('web')"
+          >
+            Web is enough for me, thanks
+          </buton>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="flex h-full flex-col items-center justify-center text-center"
+      x-show="!isConfigured"
+      x-cloak
+    >
+      <h1 class="text-5xl font-bold leading-tight min-[340px]:text-6xl">
+        own <span class="text-purple-500">clock</span>
+      </h1>
+
+      <p class="mt-4 max-w-prose leading-6">
+        Break free from the constraints of standard time and embrace the sun's
+        natural rhythm for a healthier sleep cycle and a more balanced day.
+      </p>
+
+      <p class="mt-4 max-w-prose text-sm leading-6">
+        How? Each day, the app will tell you when to go to bed, ensuring you
+        wake up at sunrise, after 8 hours of sleep. By using only relative time,
+        it helps you break habits tied to the conventional clock.
+      </p>
+
+      <button
+        class="mt-8 rounded bg-purple-500 px-16 py-2 text-sm text-white hover:bg-purple-600"
+        :class="loading ? 'opacity-50 cursor-not-allowed' : ''"
+        @click="setLocation"
+        x-text="loading ? 'Checking location...' : 'Setup own clock'"
+        :disabled="loading"
+      >
+        Setup own clock
+      </button>
+
+      <p
+        class="p-1 text-center text-xs"
+        x-show="!error"
+      >
+        App need location to calculate your local sunrise and sunset times, it's
+        one-time action.
+      </p>
+
+      <p
+        class="p-1 text-center text-xs text-red-500"
+        x-show="error"
+        x-text="error"
+      >
+      </p>
+    </div>
+
+    <div
+      class="flex h-full w-full flex-col items-center justify-center px-4 py-8 text-center"
+      x-show="isConfigured"
+    >
+      <div class="fixed bottom-2 left-0 right-0 z-10 text-xs text-gray-300">
+        <div
+          class="flex flex-col items-center justify-center gap-1 min-[360px]:flex-row min-[360px]:gap-4"
+        >
+          <a
+            class="block hover:text-purple-300"
+            :href="`https://www.google.com/maps/place/${coords.lat},${coords.lon}`"
+            x-text="`${coords.lat}, ${coords.lon}`"
+            title="Open in Google Maps"
+            target="_blank"
+          >
+          </a>
+          <button
+            type="button"
+            class="rounded border border-gray-300 px-2 py-1 transition hover:border-purple-300 hover:text-purple-300"
+            @click="resetLocation"
+          >
+            Reset location
+          </button>
+        </div>
+      </div>
+
+      <div
+        x-show="isConfigured && isAsleep"
+        x-cloak
+      >
+        <div class="p-1 font-bold leading-tight">
+          You should be asleep, go to bed, now.
+        </div>
+      </div>
+
+      <div
+        x-show="isConfigured && !isAsleep"
+        x-cloak
+      >
+        <div>
+          <div class="pb-2 text-xs">Since wake up</div>
+          <div
+            class="flex flex-row items-center justify-center gap-2 text-4xl font-bold"
+          >
+            <div
+              class="w-20 rounded border p-2 font-mono"
+              x-text="getTime(past, 'hours')"
+            >
+              00
+            </div>
+            <div
+              class="w-20 rounded border p-2 font-mono"
+              x-text="getTime(past, 'minutes')"
+            >
+              00
+            </div>
+            <div
+              class="w-20 rounded border p-2 font-mono"
+              x-text="getTime(past, 'seconds')"
+            >
+              00
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <div class="pb-2 text-xs">Till bedtime</div>
+
+          <div
+            class="flex flex-row items-center justify-center gap-2 text-4xl font-bold"
+          >
+            <div
+              class="w-20 rounded border p-2 font-mono"
+              x-text="getTime(left, 'hours')"
+            >
+              00
+            </div>
+            <div
+              class="w-20 rounded border p-2 font-mono"
+              x-text="getTime(left, 'minutes')"
+            >
+              00
+            </div>
+            <div
+              class="w-20 rounded border p-2 font-mono"
+              x-text="getTime(left, 'seconds')"
+            >
+              00
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
 
 <script>
   import Alpine from "alpinejs"
@@ -27,6 +210,7 @@ import Layout from "@/layout/Layout.astro"
   document.addEventListener("alpine:init", () => {
     Alpine.data("app", () => ({
       migration: false,
+      survey: false,
       loading: false,
       error: null,
       coords: {
@@ -65,6 +249,13 @@ import Layout from "@/layout/Layout.astro"
           this.update()
         }
 
+        if (
+          this.isConfigured &&
+          localStorage.getItem("web-mobile-survey") !== "done"
+        ) {
+          this.survey = true
+        }
+
         setInterval(() => {
           if (!this.isConfigured) {
             return
@@ -80,6 +271,17 @@ import Layout from "@/layout/Layout.astro"
 
       get isAsleep() {
         return this.left < 0 || this.past < 0
+      },
+
+      submitSurvey(type) {
+        try {
+          window?.plausible("web-mobile-survey", { props: { type } })
+        } catch (error) {
+          console.error(error)
+        }
+
+        this.survey = false
+        window.localStorage.setItem("web-mobile-survey", "done")
       },
 
       setLocation() {
@@ -190,162 +392,3 @@ import Layout from "@/layout/Layout.astro"
     window.Alpine = Alpine
   }
 </script>
-
-<Layout>
-  <main class="flex h-full items-center">
-    <div
-      class="flex h-full w-full flex-col items-center justify-center px-4 py-8 text-center"
-      x-data="app"
-    >
-      <div
-        class="fixed top-4 rounded border border-green-700 bg-green-700/10 px-12 py-4"
-        x-show="migration"
-        x-cloak
-      >
-        <div class="text-xl">Welcome to our new domain 🎉</div>
-        <div class="pt-2 text-sm">
-          Please, update your bookmarks to
-          <span class="font-bold">ownclock.app</span>
-        </div>
-      </div>
-
-      <div
-        class="flex flex-col items-center justify-center"
-        x-show="!isConfigured"
-        x-cloak
-      >
-        <h1 class="text-5xl font-bold leading-tight min-[340px]:text-6xl">
-          own <span class="text-purple-500">clock</span>
-        </h1>
-
-        <p class="mt-4 max-w-prose leading-6">
-          Break free from the constraints of standard time and embrace the sun's
-          natural rhythm for a healthier sleep cycle and a more balanced day.
-        </p>
-
-        <p class="mt-4 max-w-prose text-sm leading-6">
-          How? Each day, the app will tell you when to go to bed, ensuring you
-          wake up at sunrise, after 8 hours of sleep. By using only relative
-          time, it helps you break habits tied to the conventional clock.
-        </p>
-
-        <button
-          class="mt-8 rounded bg-purple-500 px-16 py-2 text-sm text-white hover:bg-purple-600"
-          :class="loading ? 'opacity-50 cursor-not-allowed' : ''"
-          @click="setLocation"
-          x-text="loading ? 'Checking location...' : 'Setup own clock'"
-          :disabled="loading"
-        >
-          Setup own clock
-        </button>
-
-        <p
-          class="p-1 text-center text-xs"
-          x-show="!error"
-        >
-          App need location to calculate your local sunrise and sunset times,
-          it's one-time action.
-        </p>
-
-        <p
-          class="p-1 text-center text-xs text-red-500"
-          x-show="error"
-          x-text="error"
-        >
-        </p>
-      </div>
-
-      <div
-        x-show="isConfigured"
-        class="fixed bottom-2 left-0 right-0 z-10 text-xs text-gray-300"
-      >
-        <div
-          class="flex flex-col items-center justify-center gap-1 min-[360px]:flex-row min-[360px]:gap-4"
-        >
-          <a
-            class="block hover:text-purple-300"
-            :href="`https://www.google.com/maps/place/${coords.lat},${coords.lon}`"
-            x-text="`${coords.lat}, ${coords.lon}`"
-            title="Open in Google Maps"
-            target="_blank"
-          >
-          </a>
-          <button
-            type="button"
-            class="rounded border border-gray-300 px-2 py-1 transition hover:border-purple-300 hover:text-purple-300"
-            @click="resetLocation"
-          >
-            Reset location
-          </button>
-        </div>
-      </div>
-
-      <div
-        x-show="isConfigured && isAsleep"
-        x-cloak
-      >
-        <div class="p-1 font-bold leading-tight">
-          You should be asleep, go to bed, now.
-        </div>
-      </div>
-
-      <div
-        x-show="isConfigured && !isAsleep"
-        x-cloak
-      >
-        <div>
-          <div class="pb-2 text-xs">Since wake up</div>
-          <div
-            class="flex flex-row items-center justify-center gap-2 text-4xl font-bold"
-          >
-            <div
-              class="w-20 rounded border p-2 font-mono"
-              x-text="getTime(past, 'hours')"
-            >
-              00
-            </div>
-            <div
-              class="w-20 rounded border p-2 font-mono"
-              x-text="getTime(past, 'minutes')"
-            >
-              00
-            </div>
-            <div
-              class="w-20 rounded border p-2 font-mono"
-              x-text="getTime(past, 'seconds')"
-            >
-              00
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-8">
-          <div class="pb-2 text-xs">Till bedtime</div>
-
-          <div
-            class="flex flex-row items-center justify-center gap-2 text-4xl font-bold"
-          >
-            <div
-              class="w-20 rounded border p-2 font-mono"
-              x-text="getTime(left, 'hours')"
-            >
-              00
-            </div>
-            <div
-              class="w-20 rounded border p-2 font-mono"
-              x-text="getTime(left, 'minutes')"
-            >
-              00
-            </div>
-            <div
-              class="w-20 rounded border p-2 font-mono"
-              x-text="getTime(left, 'seconds')"
-            >
-              00
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-</Layout>
